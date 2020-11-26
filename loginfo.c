@@ -69,11 +69,11 @@ static const char * const PROC_FILENAME_TEMPLATE = "/proc/%d/fd/2";
 
 /* Query latest csv log file. */
 static const char * const SQL_QUERY_CSV_FILES =
-	"SELECT filename FROM ls_csv_files ORDER BY last_update DESC LIMIT 1";
+    "SELECT filename FROM ls_csv_files ORDER BY last_update DESC LIMIT 1";
 
 /* Query latest log file. */
 static const char * const SQL_QUERY_LOG_FILES = 
-	"SELECT filename FROM ls_log_files ORDER BY last_update DESC LIMIT 1";
+    "SELECT filename FROM ls_log_files ORDER BY last_update DESC LIMIT 1";
 
 /* Definition of a result set. */
 typedef struct ResultSet
@@ -111,25 +111,25 @@ typedef struct ResultSet
  *
  */
 typedef enum CSVState {
-	STATE_INIT,
-	STATE_EMPTY_FIELD,
-	STATE_DEFAULT_FIELD,
-	STATE_STRING_START,
-	STATE_STRING_FIELD,
-	STATE_TERM_FIELD,
-	STATE_TERM_RECORD,
-	STATE_TERM,
-	STATE_ERROR,
-	STATE_END,
+    STATE_INIT,
+    STATE_EMPTY_FIELD,
+    STATE_DEFAULT_FIELD,
+    STATE_STRING_START,
+    STATE_STRING_FIELD,
+    STATE_TERM_FIELD,
+    STATE_TERM_RECORD,
+    STATE_TERM,
+    STATE_ERROR,
+    STATE_END,
 } CSVState;
 
 /* Definition of the of the errors fo the CSV parsing state machine. */
 typedef enum ParseError {
-	PARSE_SUCCESS,
-	PARSE_FIELD_TOO_LONG,
-	PARSE_TOO_MANY_FIELDS,
-	PARSE_NOT_ENOUGH_FIELDS,
-	PARSE_EOF_IN_RECORD,
+    PARSE_SUCCESS,
+    PARSE_FIELD_TOO_LONG,
+    PARSE_TOO_MANY_FIELDS,
+    PARSE_NOT_ENOUGH_FIELDS,
+    PARSE_EOF_IN_RECORD,
 } ParseError;
 
 /* Export functions. */
@@ -146,7 +146,7 @@ PG_FUNCTION_INFO_V1(li_test_cat_log_file);
 
   PARAMETERS:
     resultSet   - (INOUT) Ptr to result set
-	fcInfo      - (IN)    Ptr to result set info structure
+    fcInfo      - (IN)    Ptr to result set info structure
 
   DESCRIPTION:
     This function initializes a new result set structure to populate a
@@ -184,7 +184,7 @@ void CreateResultSet(ResultSet                *resultSet,
     {
         ereport(ERROR,
                 (errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-				 errmsg("Return type must be a row type")));
+                 errmsg("Return type must be a row type")));
     }
 
     /* Create the tuple store */
@@ -205,8 +205,8 @@ void CreateResultSet(ResultSet                *resultSet,
 
   PARAMETERS:
     resultSet   - (INOUT) Ptr to result set
-	name        - (IN)    Name of the log info setting
-	value       - (IN)    Value of the log info setting.
+    name        - (IN)    Name of the log info setting
+    value       - (IN)    Value of the log info setting.
 
   DESCRIPTION:
     This function adds a tuple to the log info view (log_info).
@@ -219,19 +219,19 @@ void CreateResultSet(ResultSet                *resultSet,
 static
 void AddLogInfo(ResultSet *resultSet, const char *name, const char *value)
 {
-	Datum   values[NUM_LOGINFO_FIELDS];                      /* Values array */
-	bool    nulls[NUM_LOGINFO_FIELDS];                        /* Nulls array */
+    Datum   values[NUM_LOGINFO_FIELDS];                      /* Values array */
+    bool    nulls[NUM_LOGINFO_FIELDS];                        /* Nulls array */
 
-	MemSet(values, 0, sizeof(values));
-	MemSet(nulls, 0, sizeof(nulls));
+    MemSet(values, 0, sizeof(values));
+    MemSet(nulls, 0, sizeof(nulls));
 
-	values[0] = CStringGetTextDatum(name);
-	values[1] = CStringGetTextDatum(value);
+    values[0] = CStringGetTextDatum(name);
+    values[1] = CStringGetTextDatum(value);
 
-	tuplestore_putvalues(resultSet->tupleStore,
-						 resultSet->tupleDesc,
-						 values,
-						 nulls);
+    tuplestore_putvalues(resultSet->tupleStore,
+                         resultSet->tupleDesc,
+                         values,
+                         nulls);
 }
 
 /*---------------------------- AddLogInfoByName -----------------------------*/
@@ -242,7 +242,7 @@ void AddLogInfo(ResultSet *resultSet, const char *name, const char *value)
 
   PARAMETERS:
     resultSet   - (INOUT) Ptr to result set
-	name        - (IN)    Name of the log info setting
+    name        - (IN)    Name of the log info setting
 
   DESCRIPTION:
     This function adds a tuple to the log info view. The value is determined
@@ -256,7 +256,7 @@ void AddLogInfo(ResultSet *resultSet, const char *name, const char *value)
 static
 void AddLogInfoByName(ResultSet *resultSet, const char *name)
 {
-	AddLogInfo(resultSet, name, GetConfigOption(name, false, false));
+    AddLogInfo(resultSet, name, GetConfigOption(name, false, false));
 }
 
 /*------------------------------- AddLogFile --------------------------------*/
@@ -266,9 +266,9 @@ void AddLogInfoByName(ResultSet *resultSet, const char *name)
 
   PARAMETERS:
     resultSet   - (INOUT) Ptr to result set
-	name        - (IN)    Name of the log info setting
-	timestamp   - (IN)    Timestamp of the last file modification
-	size        - (IN)    Size of the log file in bytes
+    name        - (IN)    Name of the log info setting
+    timestamp   - (IN)    Timestamp of the last file modification
+    size        - (IN)    Size of the log file in bytes
 
   DESCRIPTION:
     This function adds a tuple to the log files view (ls_log_files,
@@ -281,24 +281,24 @@ void AddLogInfoByName(ResultSet *resultSet, const char *name)
 */
 static
 void AddLogFile(ResultSet *resultSet,
-				const char *name,
-				const char *timestamp,
-	            long int    size)
+                const char *name,
+                const char *timestamp,
+                long int    size)
 {
-	Datum   values[NUM_LOGFILE_FIELDS];                      /* Values array */
-	bool    nulls[NUM_LOGFILE_FIELDS];                        /* Nulls array */
+    Datum   values[NUM_LOGFILE_FIELDS];                      /* Values array */
+    bool    nulls[NUM_LOGFILE_FIELDS];                        /* Nulls array */
 
-	MemSet(values, 0, sizeof(values));
-	MemSet(nulls, 0, sizeof(nulls));
+    MemSet(values, 0, sizeof(values));
+    MemSet(nulls, 0, sizeof(nulls));
 
-	values[0] = CStringGetTextDatum(name);
-	values[1] = CStringGetTextDatum(timestamp);
-	values[2] = Int64GetDatum(size);
+    values[0] = CStringGetTextDatum(name);
+    values[1] = CStringGetTextDatum(timestamp);
+    values[2] = Int64GetDatum(size);
 
-	tuplestore_putvalues(resultSet->tupleStore,
-						 resultSet->tupleDesc,
-						 values,
-						 nulls);
+    tuplestore_putvalues(resultSet->tupleStore,
+                         resultSet->tupleDesc,
+                         values,
+                         nulls);
 }
 
 /*------------------------- AddLogFileContents ------------------------------*/
@@ -308,7 +308,7 @@ void AddLogFile(ResultSet *resultSet,
 
   PARAMETERS:
     resultSet   - (INOUT) Ptr to result set
-	line        - (IN)    Line from the log file
+    line        - (IN)    Line from the log file
 
   DESCRIPTION:
     This function adds a tuple to the log file contents view (cat_log_file).
@@ -321,18 +321,18 @@ void AddLogFile(ResultSet *resultSet,
 static
 void AddLogFileContents(ResultSet *resultSet, const char *line)
 {
-	Datum   values[NUM_LOGFILE_CONTENTS_FIELDS];             /* Values array */
-	bool    nulls[NUM_LOGFILE_CONTENTS_FIELDS];               /* Nulls array */
-	
-	MemSet(values, 0, sizeof(values));
-	MemSet(nulls, 0, sizeof(nulls));
-	
-	values[0] = CStringGetTextDatum(line);
-		
-	tuplestore_putvalues(resultSet->tupleStore,
-						 resultSet->tupleDesc,
-						 values,
-						 nulls);
+    Datum   values[NUM_LOGFILE_CONTENTS_FIELDS];             /* Values array */
+    bool    nulls[NUM_LOGFILE_CONTENTS_FIELDS];               /* Nulls array */
+    
+    MemSet(values, 0, sizeof(values));
+    MemSet(nulls, 0, sizeof(nulls));
+    
+    values[0] = CStringGetTextDatum(line);
+        
+    tuplestore_putvalues(resultSet->tupleStore,
+                         resultSet->tupleDesc,
+                         values,
+                         nulls);
 }
 
 /*------------------------- AddCSVFileContents ------------------------------*/
@@ -342,11 +342,11 @@ void AddLogFileContents(ResultSet *resultSet, const char *line)
 
   PARAMETERS:
     resultSet   - (INOUT) Ptr to result set
-	fields      - (IN)    Ptr to array of fields
+    fields      - (IN)    Ptr to array of fields
 
   DESCRIPTION:
     This function adds a tuple to the csv file contents view (cat_csv_file).
-	The fields is an array of strings. It must have NUM_CSV_FIELDS.
+    The fields is an array of strings. It must have NUM_CSV_FIELDS.
 
   NOTES:
 
@@ -356,21 +356,21 @@ void AddLogFileContents(ResultSet *resultSet, const char *line)
 static
 void AddCSVFileContents(ResultSet *resultSet, char **fields)
 {
-	Datum   values[NUM_CSV_FIELDS];                          /* Values array */
-	bool    nulls[NUM_CSV_FIELDS];                            /* Nulls array */
-				
-	MemSet(values, 0, sizeof(values));
-	MemSet(nulls, 0, sizeof(nulls));
-				
-	for (int i = 0; i < NUM_CSV_FIELDS; i++)
-	{
-		values[i] = CStringGetTextDatum(fields[i]);
-	}
-				
-	tuplestore_putvalues(resultSet->tupleStore,
-						 resultSet->tupleDesc,
-						 values,
-						 nulls);
+    Datum   values[NUM_CSV_FIELDS];                          /* Values array */
+    bool    nulls[NUM_CSV_FIELDS];                            /* Nulls array */
+                
+    MemSet(values, 0, sizeof(values));
+    MemSet(nulls, 0, sizeof(nulls));
+                
+    for (int i = 0; i < NUM_CSV_FIELDS; i++)
+    {
+        values[i] = CStringGetTextDatum(fields[i]);
+    }
+                
+    tuplestore_putvalues(resultSet->tupleStore,
+                         resultSet->tupleDesc,
+                         values,
+                         nulls);
 }
 
 /*-------------------------- GetLinkedFilename ------------------------------*/
@@ -396,53 +396,53 @@ void AddCSVFileContents(ResultSet *resultSet, char **fields)
 static
 char *GetLinkedFilename(const char *filename)
 {
-	size_t    linklen    = MAX_LINK_NAME_LEN;         /* Soft link name size */
+    size_t    linklen    = MAX_LINK_NAME_LEN;         /* Soft link name size */
     char     *linkname   = NULL;                    /* Filename of soft link */
 
-	while (1)
-	{
-		linkname = malloc(linklen);
-		if (linkname)
-		{
-			ssize_t   r;                              /* Actual size of link */
-			
-			r = readlink(filename, linkname, linklen);
-			if (r < 0)
-			{
-				free(linkname);
-				linkname = NULL;
+    while (1)
+    {
+        linkname = malloc(linklen);
+        if (linkname)
+        {
+            ssize_t   r;                              /* Actual size of link */
+            
+            r = readlink(filename, linkname, linklen);
+            if (r < 0)
+            {
+                free(linkname);
+                linkname = NULL;
 
-				ereport(ERROR,
-						(errcode(ERRCODE_INTERNAL_ERROR),
-						 errmsg("readlink failed")));
-			}
-			else if (r > linklen - 1)
-			{
-				pfree(linkname);
-				linklen *= 2;
+                ereport(ERROR,
+                        (errcode(ERRCODE_INTERNAL_ERROR),
+                         errmsg("readlink failed")));
+            }
+            else if (r > linklen - 1)
+            {
+                pfree(linkname);
+                linklen *= 2;
 
-				if (linklen > PATH_MAX)
-				{
-					ereport(ERROR,
-							(errcode(ERRCODE_INTERNAL_ERROR),
-							 errmsg("readlink returned > 16384")));
-				}
-			}
-			else
-			{
-				linkname[r] = '\0';
-				break;
-			}
-		}
-		else
-		{
-			ereport(ERROR,
-					(errcode(ERRCODE_OUT_OF_MEMORY),
-					 errmsg("cannot alloc os link information")));
-		}
-	}
-	
-	return linkname;
+                if (linklen > PATH_MAX)
+                {
+                    ereport(ERROR,
+                            (errcode(ERRCODE_INTERNAL_ERROR),
+                             errmsg("readlink returned > 16384")));
+                }
+            }
+            else
+            {
+                linkname[r] = '\0';
+                break;
+            }
+        }
+        else
+        {
+            ereport(ERROR,
+                    (errcode(ERRCODE_OUT_OF_MEMORY),
+                     errmsg("cannot alloc os link information")));
+        }
+    }
+    
+    return linkname;
 }
 
 /*----------------------------- QueryDirectory ------------------------------*/
@@ -467,28 +467,28 @@ char *GetLinkedFilename(const char *filename)
 static
 void QueryDirectory(const char *pattern, ResultSet *resultSet)
 {
-	glob_t   gbuffer;                                        /* Match buffer */
+    glob_t   gbuffer;                                        /* Match buffer */
 
-	if (glob(pattern, 0, NULL, &gbuffer) == 0)
-	{
-		char   **names = gbuffer.gl_pathv;             /* List of file names */
-		
-		for ( ; *names; names++)
-		{
-			struct stat   sb;                               /* File metadata */
-			
-			if (lstat(*names, &sb) != -1)
-			{
-				char   timestamp[TIMESTAMP_LEN];   /* Last file modification */
-				
-				strftime(timestamp,
-						 sizeof(timestamp),
-						 "%Y.%m.%d %H:%M:%S",
-						 localtime(&sb.st_ctime));
-				AddLogFile(resultSet, *names, timestamp, sb.st_size);
-			}
-		}
-	}
+    if (glob(pattern, 0, NULL, &gbuffer) == 0)
+    {
+        char   **names = gbuffer.gl_pathv;             /* List of file names */
+        
+        for ( ; *names; names++)
+        {
+            struct stat   sb;                               /* File metadata */
+            
+            if (lstat(*names, &sb) != -1)
+            {
+                char   timestamp[TIMESTAMP_LEN];   /* Last file modification */
+                
+                strftime(timestamp,
+                         sizeof(timestamp),
+                         "%Y.%m.%d %H:%M:%S",
+                         localtime(&sb.st_ctime));
+                AddLogFile(resultSet, *names, timestamp, sb.st_size);
+            }
+        }
+    }
 }
 
 /*----------------------------- GetCurrentLogFilename -----------------------*/
@@ -511,42 +511,42 @@ void QueryDirectory(const char *pattern, ResultSet *resultSet)
 static
 const char *GetCurrentLogFilename(const char *type)
 {
-	int          err;                                           /* SQL error */
-	int          nbrows;                     /* Number of rows in result set */
-	char        *name        = NULL;                        /* Log file name */
-	const char  *sql         = (strcmp(type, "csv") == 0        /* SQL query */
-				         		   ? SQL_QUERY_CSV_FILES
-				         		   : SQL_QUERY_LOG_FILES);
+    int          err;                                           /* SQL error */
+    int          nbrows;                     /* Number of rows in result set */
+    char        *name        = NULL;                        /* Log file name */
+    const char  *sql         = (strcmp(type, "csv") == 0        /* SQL query */
+                                   ? SQL_QUERY_CSV_FILES
+                                   : SQL_QUERY_LOG_FILES);
 
-	/* Connect to postgres. */
-	err = SPI_connect();
-	if (err != SPI_OK_CONNECT)
-	{
-		elog(ERROR, "SPI_connect: %s", SPI_result_code_string(err));
-	}
+    /* Connect to postgres. */
+    err = SPI_connect();
+    if (err != SPI_OK_CONNECT)
+    {
+        elog(ERROR, "SPI_connect: %s", SPI_result_code_string(err));
+    }
 
-	/* Query current log or csv file. */
-	err = SPI_execute(sql, true, 0);
-	if (err != SPI_OK_SELECT)
-		elog(ERROR, "SPI_execute: %s", SPI_result_code_string(err));
+    /* Query current log or csv file. */
+    err = SPI_execute(sql, true, 0);
+    if (err != SPI_OK_SELECT)
+        elog(ERROR, "SPI_execute: %s", SPI_result_code_string(err));
 
-	nbrows = SPI_processed;
-	if (nbrows > 0 && SPI_tuptable)
-	{
-		TupleDesc        tupdesc  = SPI_tuptable->tupdesc;
-			                                             /* Tuple descriptor */
-		SPITupleTable   *tuptable = SPI_tuptable;             /* Tuple table */
-		HeapTuple        tuple    = tuptable->vals[0];      /* Tuple storage */
+    nbrows = SPI_processed;
+    if (nbrows > 0 && SPI_tuptable)
+    {
+        TupleDesc        tupdesc  = SPI_tuptable->tupdesc;
+                                                         /* Tuple descriptor */
+        SPITupleTable   *tuptable = SPI_tuptable;             /* Tuple table */
+        HeapTuple        tuple    = tuptable->vals[0];      /* Tuple storage */
 
-		name = SPI_getvalue(tuple, tupdesc, 1);
-	}
+        name = SPI_getvalue(tuple, tupdesc, 1);
+    }
 
-	/* Cleanup connection. */
-	err = SPI_finish();
-	if (err != SPI_OK_FINISH)
-		elog(ERROR, "SPI_finish: %s", SPI_result_code_string(err));
+    /* Cleanup connection. */
+    err = SPI_finish();
+    if (err != SPI_OK_FINISH)
+        elog(ERROR, "SPI_finish: %s", SPI_result_code_string(err));
 
-	return name;
+    return name;
 }
 
 /*----------------------------- FreeFieldsMemory ----------------------------*/
@@ -556,7 +556,7 @@ const char *GetCurrentLogFilename(const char *type)
 
   PARAMETERS:
     fields     - (INOUT) Ptr to array of string fields
-	numFields  - (IN)    Number of fields to deallocate
+    numFields  - (IN)    Number of fields to deallocate
 
   DESCRIPTION:
     This function the CSV fields array.
@@ -569,10 +569,10 @@ const char *GetCurrentLogFilename(const char *type)
 static
 void FreeFieldsMemory(char **fields, int numFields)
 {
-	for (int i = 0; i < numFields; i++)
-	{
-		pfree(fields[i]);
-	}
+    for (int i = 0; i < numFields; i++)
+    {
+        pfree(fields[i]);
+    }
 }
 
 /*----------------------------- ProcessLogFile ------------------------------*/
@@ -596,15 +596,15 @@ void FreeFieldsMemory(char **fields, int numFields)
 static
 void ProcessLogFile(FILE *f, ResultSet *resultSet)
 {
-	char   buffer[MAX_LOGFILE_LINE_LEN];         /* Buffer for next log line */
+    char   buffer[MAX_LOGFILE_LINE_LEN];         /* Buffer for next log line */
 
-	while (fgets(buffer, sizeof(buffer), f))
-	{
-		int   len = strlen(buffer);                           /* Line length */
+    while (fgets(buffer, sizeof(buffer), f))
+    {
+        int   len = strlen(buffer);                           /* Line length */
 
-		buffer[len > 0 ? len - 1 : 0] = '\0';
-		AddLogFileContents(resultSet, buffer);
-	}
+        buffer[len > 0 ? len - 1 : 0] = '\0';
+        AddLogFileContents(resultSet, buffer);
+    }
 }
 
 /*----------------------------- ProcessCSVFile ------------------------------*/
@@ -631,209 +631,209 @@ void ProcessLogFile(FILE *f, ResultSet *resultSet)
 static
 void ProcessCSVFile(FILE *f, ResultSet *resultSet)
 {
-	int         pos      = 0;               /* Current buffer write position */
-	int         field    = 0;                                /* Field number */
-	int         quotes   = 0;                  /* In string quote processing */
+    int         pos      = 0;               /* Current buffer write position */
+    int         field    = 0;                                /* Field number */
+    int         quotes   = 0;                  /* In string quote processing */
 
-	CSVState    state    = STATE_INIT;                /* State machine state */
-	ParseError  error    = PARSE_SUCCESS;                    /* Parse errors */
-	bool        isString = false;                       /* Processing string */
+    CSVState    state    = STATE_INIT;                /* State machine state */
+    ParseError  error    = PARSE_SUCCESS;                    /* Parse errors */
+    bool        isString = false;                       /* Processing string */
 
-	char       *buffer   = NULL;              /* Write buffer for next field */
+    char       *buffer   = NULL;              /* Write buffer for next field */
     char       *fields[NUM_CSV_FIELDS];   /* Cache to store processed fields */
 
-	while (state != STATE_END)
-	{
-		char   ch;                                         /* Next character */
+    while (state != STATE_END)
+    {
+        char   ch;                                         /* Next character */
 
-		switch (state)
-		{
-		case STATE_INIT:
-			/* Start of a field. */
-			buffer = palloc(MAX_CSV_FIELD_LEN);
-			
-			ch = fgetc(f);
-			if (feof(f))
-			{
-				state = STATE_TERM;
-				break;
-			}
+        switch (state)
+        {
+        case STATE_INIT:
+            /* Start of a field. */
+            buffer = palloc(MAX_CSV_FIELD_LEN);
+            
+            ch = fgetc(f);
+            if (feof(f))
+            {
+                state = STATE_TERM;
+                break;
+            }
 
-			/* Trim leading spaces. */
-			if (!isspace(ch))
-			{
-				if (ch == '"')
-					state = STATE_STRING_START;
-				else if (ch == ',')
-					state = STATE_EMPTY_FIELD;
-				else
-				{
-					state = STATE_DEFAULT_FIELD;
-					buffer[pos++] = ch;
-				}
-			}
-			break;
+            /* Trim leading spaces. */
+            if (!isspace(ch))
+            {
+                if (ch == '"')
+                    state = STATE_STRING_START;
+                else if (ch == ',')
+                    state = STATE_EMPTY_FIELD;
+                else
+                {
+                    state = STATE_DEFAULT_FIELD;
+                    buffer[pos++] = ch;
+                }
+            }
+            break;
 
-		case STATE_EMPTY_FIELD:
-			/* Field has no contents. */
-			state = STATE_TERM_FIELD;
-			break;
-			
-		case STATE_DEFAULT_FIELD:
-			/* This is a default field - not a string field. */
-			ch = fgetc(f);
-			if (feof(f))
-				state = STATE_TERM;
-			else if (ch == ',' || ch == '\n')
-				state = STATE_TERM_FIELD;
-			else
-				buffer[pos++] = ch;
-			break;
+        case STATE_EMPTY_FIELD:
+            /* Field has no contents. */
+            state = STATE_TERM_FIELD;
+            break;
+            
+        case STATE_DEFAULT_FIELD:
+            /* This is a default field - not a string field. */
+            ch = fgetc(f);
+            if (feof(f))
+                state = STATE_TERM;
+            else if (ch == ',' || ch == '\n')
+                state = STATE_TERM_FIELD;
+            else
+                buffer[pos++] = ch;
+            break;
 
-		case STATE_STRING_START:
-			/* Start of a string field. */
-			isString = true;
-			state    = STATE_STRING_FIELD;
-			break;
-			
-		case STATE_STRING_FIELD:
-			/* This is a string field. */
-			ch = fgetc(f);
-			if (feof(f))
-			{
-				state = STATE_TERM; 
-			}
-			else if (!isString && (ch == ',' || ch == '\n'))
-			{
-				state = STATE_TERM_FIELD;
-			}
-		    else if (ch != '"')
-			{
-				buffer[pos++] = ch;
-			}
-			else
-			{
-				if (!isString)
-				{
-					buffer[pos++] = ch;
-					isString      = true;
-					quotes        = 2;
-				}
-				else if (quotes)
-				{
-					--quotes;
-					if (quotes == 0)
-						buffer[pos++] = ch;
-				}	
-				else
-					isString = false;
-			}
-			break;
+        case STATE_STRING_START:
+            /* Start of a string field. */
+            isString = true;
+            state    = STATE_STRING_FIELD;
+            break;
+            
+        case STATE_STRING_FIELD:
+            /* This is a string field. */
+            ch = fgetc(f);
+            if (feof(f))
+            {
+                state = STATE_TERM; 
+            }
+            else if (!isString && (ch == ',' || ch == '\n'))
+            {
+                state = STATE_TERM_FIELD;
+            }
+            else if (ch != '"')
+            {
+                buffer[pos++] = ch;
+            }
+            else
+            {
+                if (!isString)
+                {
+                    buffer[pos++] = ch;
+                    isString      = true;
+                    quotes        = 2;
+                }
+                else if (quotes)
+                {
+                    --quotes;
+                    if (quotes == 0)
+                        buffer[pos++] = ch;
+                }   
+                else
+                    isString = false;
+            }
+            break;
 
-		case STATE_TERM_FIELD:
-			/* Field is terminated. */
-			buffer[pos]     = '\0';
-			fields[field++] = buffer;
-			buffer          = NULL;
+        case STATE_TERM_FIELD:
+            /* Field is terminated. */
+            buffer[pos]     = '\0';
+            fields[field++] = buffer;
+            buffer          = NULL;
 
-			if (ch == '\n')
-			{
-				state = STATE_TERM_RECORD;
-			}
-			else
-			{
-				if (field > NUM_CSV_FIELDS)
-				{
-					error = PARSE_TOO_MANY_FIELDS;
-					state = STATE_TERM;
-				} else {
-					state = STATE_INIT;
-				}
-			}
+            if (ch == '\n')
+            {
+                state = STATE_TERM_RECORD;
+            }
+            else
+            {
+                if (field > NUM_CSV_FIELDS)
+                {
+                    error = PARSE_TOO_MANY_FIELDS;
+                    state = STATE_TERM;
+                } else {
+                    state = STATE_INIT;
+                }
+            }
 
-			pos = 0;
-			break;
+            pos = 0;
+            break;
 
-		case STATE_TERM_RECORD:
-			/* Record is terminated. */
-			if (field != NUM_CSV_FIELDS)
-			{
-				error = PARSE_NOT_ENOUGH_FIELDS;
-				state = STATE_TERM;
-			}
-			else
-			{
-				AddCSVFileContents(resultSet, fields);
-				FreeFieldsMemory(fields, field);
+        case STATE_TERM_RECORD:
+            /* Record is terminated. */
+            if (field != NUM_CSV_FIELDS)
+            {
+                error = PARSE_NOT_ENOUGH_FIELDS;
+                state = STATE_TERM;
+            }
+            else
+            {
+                AddCSVFileContents(resultSet, fields);
+                FreeFieldsMemory(fields, field);
 
-				field = 0;
-				state = STATE_INIT;
-			}
-			break;
+                field = 0;
+                state = STATE_INIT;
+            }
+            break;
 
-		case STATE_TERM:
-			/* Cleanup already allocated fields. */
-			if (buffer)
-				pfree(buffer);
-			FreeFieldsMemory(fields, field);
+        case STATE_TERM:
+            /* Cleanup already allocated fields. */
+            if (buffer)
+                pfree(buffer);
+            FreeFieldsMemory(fields, field);
 
-			if (error == PARSE_SUCCESS && field != 0)
-				error = PARSE_EOF_IN_RECORD;
+            if (error == PARSE_SUCCESS && field != 0)
+                error = PARSE_EOF_IN_RECORD;
 
-			if (error != PARSE_SUCCESS)
-				state = STATE_ERROR;
-			else
-				state = STATE_END;
-			break;
+            if (error != PARSE_SUCCESS)
+                state = STATE_ERROR;
+            else
+                state = STATE_END;
+            break;
 
-		case STATE_ERROR:
-			/* Close file handle before raising error. */
-			fclose(f);
-			
-			switch (error)
-			{
-			case PARSE_FIELD_TOO_LONG:
-				ereport(ERROR,
-						(errcode(ERRCODE_INTERNAL_ERROR),
-						 errmsg("invalid CSV field length")));
-				break;
+        case STATE_ERROR:
+            /* Close file handle before raising error. */
+            fclose(f);
+            
+            switch (error)
+            {
+            case PARSE_FIELD_TOO_LONG:
+                ereport(ERROR,
+                        (errcode(ERRCODE_INTERNAL_ERROR),
+                         errmsg("invalid CSV field length")));
+                break;
 
-			case PARSE_NOT_ENOUGH_FIELDS:
-				ereport(ERROR,
-				 		(errcode(ERRCODE_INTERNAL_ERROR),
-				 		 errmsg("invalid CSV format, not enough fields")));
-				break;
+            case PARSE_NOT_ENOUGH_FIELDS:
+                ereport(ERROR,
+                        (errcode(ERRCODE_INTERNAL_ERROR),
+                         errmsg("invalid CSV format, not enough fields")));
+                break;
 
-			case PARSE_TOO_MANY_FIELDS:
-				ereport(ERROR,
-				 		(errcode(ERRCODE_INTERNAL_ERROR),
-				 		 errmsg("invalid CSV format, too many fields")));
-				break;
+            case PARSE_TOO_MANY_FIELDS:
+                ereport(ERROR,
+                        (errcode(ERRCODE_INTERNAL_ERROR),
+                         errmsg("invalid CSV format, too many fields")));
+                break;
 
-			case PARSE_EOF_IN_RECORD:
-				ereport(ERROR,
-				 		(errcode(ERRCODE_INTERNAL_ERROR),
-				 		 errmsg("eof while parsing record")));
-				break;
+            case PARSE_EOF_IN_RECORD:
+                ereport(ERROR,
+                        (errcode(ERRCODE_INTERNAL_ERROR),
+                         errmsg("eof while parsing record")));
+                break;
 
-			case PARSE_SUCCESS:
-				/* Fallthrough */
-				break;
-			}
-			break;
+            case PARSE_SUCCESS:
+                /* Fallthrough */
+                break;
+            }
+            break;
 
-		case STATE_END:
-			/* Silence compiler about unhandled enum. */
-			break;
-		}
+        case STATE_END:
+            /* Silence compiler about unhandled enum. */
+            break;
+        }
 
-		/* Check for valid field length. */
-		if (pos >= MAX_CSV_FIELD_LEN)
-		{
-			error = PARSE_FIELD_TOO_LONG;
-			state = STATE_TERM;
-		}
-	}
+        /* Check for valid field length. */
+        if (pos >= MAX_CSV_FIELD_LEN)
+        {
+            error = PARSE_FIELD_TOO_LONG;
+            state = STATE_TERM;
+        }
+    }
 }
 
 /*----------------------------- LogFileContents ------------------------------*/
@@ -858,25 +858,25 @@ void ProcessCSVFile(FILE *f, ResultSet *resultSet)
 */
 static
 void LogFileContents(const char *filename,
-					 const char *extension,
-					 ResultSet  *resultSet)
+                     const char *extension,
+                     ResultSet  *resultSet)
 {
-	FILE   *f = fopen(filename, "r");                     /* Log file handle */
-	if (f)
-	{
-		if (strcmp(extension, "log") == 0)
-			ProcessLogFile(f, resultSet);
-		else
-			ProcessCSVFile(f, resultSet);
-	}
-	else
-	{
-		ereport(ERROR,
-				(errcode(ERRCODE_INTERNAL_ERROR),
-				 errmsg("invalid file name")));
-	}
-	
-	fclose(f);
+    FILE   *f = fopen(filename, "r");                     /* Log file handle */
+    if (f)
+    {
+        if (strcmp(extension, "log") == 0)
+            ProcessLogFile(f, resultSet);
+        else
+            ProcessCSVFile(f, resultSet);
+    }
+    else
+    {
+        ereport(ERROR,
+                (errcode(ERRCODE_INTERNAL_ERROR),
+                 errmsg("invalid file name")));
+    }
+    
+    fclose(f);
 }
 
 /*------------------------------- li_log_info -------------------------------*/
@@ -897,43 +897,43 @@ void LogFileContents(const char *filename,
 */
 Datum li_log_info(PG_FUNCTION_ARGS)
 {
-	pid_t        pid         = getpid();       /* Process id of this process */
+    pid_t        pid         = getpid();       /* Process id of this process */
     char        *linkname    = NULL;     /* Filename the soft link points to */
-	char         fileName[PATH_MAX];                         /* Log filename */
+    char         fileName[PATH_MAX];                         /* Log filename */
     ResultSet    resultSet;                     /* Result set for this query */
 
     /* Build a new result set. */
-    CreateResultSet(&resultSet, fcinfo);	
+    CreateResultSet(&resultSet, fcinfo);    
 
-	sprintf(fileName, PROC_FILENAME_TEMPLATE, pid);
-	linkname = GetLinkedFilename(fileName);
-	if (linkname)
-		AddLogInfo(&resultSet, "real_logfile_name", linkname);
+    sprintf(fileName, PROC_FILENAME_TEMPLATE, pid);
+    linkname = GetLinkedFilename(fileName);
+    if (linkname)
+        AddLogInfo(&resultSet, "real_logfile_name", linkname);
 
-	AddLogInfoByName(&resultSet, "log_destination");
-	AddLogInfoByName(&resultSet, "log_directory");
-	AddLogInfoByName(&resultSet, "log_duration");
-	AddLogInfoByName(&resultSet, "log_filename");
-	AddLogInfoByName(&resultSet, "log_file_mode");
-	AddLogInfoByName(&resultSet, "log_hostname");
-	AddLogInfoByName(&resultSet, "log_line_prefix");
-	AddLogInfoByName(&resultSet, "log_min_error_statement");
-	AddLogInfoByName(&resultSet, "log_min_messages");
-	AddLogInfoByName(&resultSet, "log_rotation_age");
-	AddLogInfoByName(&resultSet, "log_rotation_size");
-	AddLogInfoByName(&resultSet, "log_timezone");
-	AddLogInfoByName(&resultSet, "log_truncate_on_rotation");
-	AddLogInfoByName(&resultSet, "logging_collector");
-	AddLogInfoByName(&resultSet, "syslog_facility");
-	AddLogInfoByName(&resultSet, "syslog_ident");
-	AddLogInfoByName(&resultSet, "syslog_sequence_numbers");
-	AddLogInfoByName(&resultSet, "syslog_split_messages");
+    AddLogInfoByName(&resultSet, "log_destination");
+    AddLogInfoByName(&resultSet, "log_directory");
+    AddLogInfoByName(&resultSet, "log_duration");
+    AddLogInfoByName(&resultSet, "log_filename");
+    AddLogInfoByName(&resultSet, "log_file_mode");
+    AddLogInfoByName(&resultSet, "log_hostname");
+    AddLogInfoByName(&resultSet, "log_line_prefix");
+    AddLogInfoByName(&resultSet, "log_min_error_statement");
+    AddLogInfoByName(&resultSet, "log_min_messages");
+    AddLogInfoByName(&resultSet, "log_rotation_age");
+    AddLogInfoByName(&resultSet, "log_rotation_size");
+    AddLogInfoByName(&resultSet, "log_timezone");
+    AddLogInfoByName(&resultSet, "log_truncate_on_rotation");
+    AddLogInfoByName(&resultSet, "logging_collector");
+    AddLogInfoByName(&resultSet, "syslog_facility");
+    AddLogInfoByName(&resultSet, "syslog_ident");
+    AddLogInfoByName(&resultSet, "syslog_sequence_numbers");
+    AddLogInfoByName(&resultSet, "syslog_split_messages");
 
-	/* Clean up and return the result set. */
+    /* Clean up and return the result set. */
     tuplestore_donestoring(resultSet.tupleStore);
 
-	if (linkname)
-		free(linkname);
+    if (linkname)
+        free(linkname);
 
     MemoryContextSwitchTo(resultSet.oldCtx);
     PG_RETURN_VOID();
@@ -957,69 +957,69 @@ Datum li_log_info(PG_FUNCTION_ARGS)
 */
 Datum li_ls_log_files(PG_FUNCTION_ARGS)
 {
-	pid_t   pid        = getpid();             /* Process id of this process */
+    pid_t   pid        = getpid();             /* Process id of this process */
     char   *linkname   = NULL;           /* Filename the soft link points to */
-	char   *type       = NULL;               /* Type of log file: log or csv */
+    char   *type       = NULL;               /* Type of log file: log or csv */
 
-	char        filename[PATH_MAX];                          /* Log filename */
+    char        filename[PATH_MAX];                          /* Log filename */
     ResultSet   resultSet;                      /* Result set for this query */
 
-	type = PG_GETARG_CSTRING(0);
+    type = PG_GETARG_CSTRING(0);
     if (!type)
-	{
-		ereport(ERROR,
-				(errcode(ERRCODE_INTERNAL_ERROR),
-				 errmsg("type of log file must be specified")));
-	}
-	
+    {
+        ereport(ERROR,
+                (errcode(ERRCODE_INTERNAL_ERROR),
+                 errmsg("type of log file must be specified")));
+    }
+    
     /* Build a new result set. */
-    CreateResultSet(&resultSet, fcinfo);	
+    CreateResultSet(&resultSet, fcinfo);    
 
-	sprintf(filename, PROC_FILENAME_TEMPLATE, pid);
-	linkname = GetLinkedFilename(filename);
+    sprintf(filename, PROC_FILENAME_TEMPLATE, pid);
+    linkname = GetLinkedFilename(filename);
 
-	if (linkname)
-	{
-		/* The link can point to either a log file or a pipe. If its is a log
+    if (linkname)
+    {
+        /* The link can point to either a log file or a pipe. If its is a log
          * log file, we can directly open it. In case of a pipe we need to find
          * out which log file it is. A pipe is used when logger process is
          * configured. Unfortunately postgres does not expose its pid, so we
          * we query the log file directory and search for the latest log file.
          */
-		if (strncmp(linkname, "pipe:", 5) == 0)
-		{
-			/* Get log directory. */
-			if (strlen(Log_directory) && Log_directory[0] == '/')
-			{
-				strcpy(filename, Log_directory);
-			}
-			else
-			{
-				sprintf(filename,
-						"%s/%s",
-						GetConfigOption("data_directory", false, false),
-						Log_directory);
-			}
-			
-			/* Open directory and read log files. */
-			sprintf(filename, "%s/*.%s", filename, type);
-			QueryDirectory(filename, &resultSet);
-		} else {
-			struct stat sb;                                 /* File metadata */
+        if (strncmp(linkname, "pipe:", 5) == 0)
+        {
+            /* Get log directory. */
+            if (strlen(Log_directory) && Log_directory[0] == '/')
+            {
+                strcpy(filename, Log_directory);
+            }
+            else
+            {
+                sprintf(filename,
+                        "%s/%s",
+                        GetConfigOption("data_directory", false, false),
+                        Log_directory);
+            }
+            
+            /* Open directory and read log files. */
+            sprintf(filename, "%s/*.%s", filename, type);
+            QueryDirectory(filename, &resultSet);
+        } else {
+            struct stat sb;                                 /* File metadata */
 
-			if (lstat(linkname, &sb) != -1)
-			{
-				AddLogFile(&resultSet,
-						   linkname,
-						   ctime(&sb.st_ctime),
-						   sb.st_size);
-			}
-		}
+            if (lstat(linkname, &sb) != -1)
+            {
+                AddLogFile(&resultSet,
+                           linkname,
+                           ctime(&sb.st_ctime),
+                           sb.st_size);
+            }
+        }
 
-		free(linkname);
-	}
+        free(linkname);
+    }
 
-	/* Clean up and return the result set. */
+    /* Clean up and return the result set. */
     tuplestore_donestoring(resultSet.tupleStore);
 
     MemoryContextSwitchTo(resultSet.oldCtx);
@@ -1044,43 +1044,43 @@ Datum li_ls_log_files(PG_FUNCTION_ARGS)
 */
 Datum li_cat_log_file(PG_FUNCTION_ARGS)
 {
-	pid_t        pid            = getpid();           /* Pid of this process */
+    pid_t        pid            = getpid();           /* Pid of this process */
     char        *linkname       = NULL;  /* Filename the soft link points to */
-	char        *type           = NULL;      /* Type of log file: log or csv */
-	char         filename[PATH_MAX];                         /* Log filename */
+    char        *type           = NULL;      /* Type of log file: log or csv */
+    char         filename[PATH_MAX];                         /* Log filename */
     ResultSet    resultSet;                     /* Result set for this query */
 
     /* Build a new result set. */
-	type = PG_GETARG_CSTRING(0);
+    type = PG_GETARG_CSTRING(0);
     if (!type)
-	{
-		ereport(ERROR,
-				(errcode(ERRCODE_INTERNAL_ERROR),
-				 errmsg("log file type must be specified")));
-	}
-	
-    CreateResultSet(&resultSet, fcinfo);	
+    {
+        ereport(ERROR,
+                (errcode(ERRCODE_INTERNAL_ERROR),
+                 errmsg("log file type must be specified")));
+    }
+    
+    CreateResultSet(&resultSet, fcinfo);    
 
-	/* Open log file and create records. */
-	sprintf(filename, PROC_FILENAME_TEMPLATE, pid);
+    /* Open log file and create records. */
+    sprintf(filename, PROC_FILENAME_TEMPLATE, pid);
 
-	linkname = GetLinkedFilename(filename);
-	if (linkname)
-	{
-		if (strncmp(linkname, "pipe:", 5) == 0)
-		{
-			strcpy(filename, GetCurrentLogFilename(PG_GETARG_CSTRING(0)));
-			LogFileContents(filename, type, &resultSet);
-		}
-		else
-		{
-			LogFileContents(filename, type, &resultSet);
-		}
+    linkname = GetLinkedFilename(filename);
+    if (linkname)
+    {
+        if (strncmp(linkname, "pipe:", 5) == 0)
+        {
+            strcpy(filename, GetCurrentLogFilename(PG_GETARG_CSTRING(0)));
+            LogFileContents(filename, type, &resultSet);
+        }
+        else
+        {
+            LogFileContents(filename, type, &resultSet);
+        }
 
-		free(linkname);
-	}
-	
-	/* Clean up and return the result set. */
+        free(linkname);
+    }
+    
+    /* Clean up and return the result set. */
     tuplestore_donestoring(resultSet.tupleStore);
 
     MemoryContextSwitchTo(resultSet.oldCtx);
@@ -1107,30 +1107,30 @@ Datum li_cat_log_file(PG_FUNCTION_ARGS)
 */
 Datum li_test_cat_log_file(PG_FUNCTION_ARGS)
 {
-	char        *type           = NULL;      /* Type of log file: log or csv */
-	char        *filename       = NULL;                      /* log filename */
+    char        *type           = NULL;      /* Type of log file: log or csv */
+    char        *filename       = NULL;                      /* log filename */
     ResultSet    resultSet;                     /* Result set for this query */
 
-	filename = PG_GETARG_CSTRING(0);
+    filename = PG_GETARG_CSTRING(0);
     if (!filename)
-	{
-		ereport(ERROR,
-				(errcode(ERRCODE_INTERNAL_ERROR),
-				 errmsg("log filename must be specified")));
-	}
+    {
+        ereport(ERROR,
+                (errcode(ERRCODE_INTERNAL_ERROR),
+                 errmsg("log filename must be specified")));
+    }
 
-	type = PG_GETARG_CSTRING(1);
+    type = PG_GETARG_CSTRING(1);
     if (!type)
-	{
-		ereport(ERROR,
-				(errcode(ERRCODE_INTERNAL_ERROR),
-				 errmsg("log file type must be specified")));
-	}
-	
-    CreateResultSet(&resultSet, fcinfo);	
-	LogFileContents(filename, type, &resultSet);
+    {
+        ereport(ERROR,
+                (errcode(ERRCODE_INTERNAL_ERROR),
+                 errmsg("log file type must be specified")));
+    }
+    
+    CreateResultSet(&resultSet, fcinfo);    
+    LogFileContents(filename, type, &resultSet);
 
-	/* Clean up and return the result set. */
+    /* Clean up and return the result set. */
     tuplestore_donestoring(resultSet.tupleStore);
 
     MemoryContextSwitchTo(resultSet.oldCtx);
