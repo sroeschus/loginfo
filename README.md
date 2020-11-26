@@ -144,7 +144,7 @@ SELECT v.error_severity, COUNT(*)
 ```
 
 # Building the postgres extension
-The easiest way to build the extension is to have a postgres source distribution. Go to the contrib directory and the clone the repository there. Then switch to loginfo directory and build the extension. Afterwards it can be installed and tested. Obviously you don't want to do this on your production machine.
+The easiest way to build the extension is to have a postgres source distribution. Go to the contrib directory and clone the repository there. Then switch to loginfo directory and build the extension. Afterwards it can be installed and tested. Obviously you don't want to do this on your production machine.
 ```
 cd postgres/contrib
 git clone https://github.com/sroeschus/loginfo.git
