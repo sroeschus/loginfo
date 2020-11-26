@@ -107,7 +107,7 @@ typedef struct ResultSet
  *    |-------------------------------------------- TermRecord ----> Term --> Error
  *                                                                     |        |
  *                                                                     V        |
- *     																  End  <-----
+ *                                                                    End  <-----
  *
  */
 typedef enum CSVState {
