@@ -77,3 +77,13 @@ steve=# select * from ls_csv_files;
 ```
 It shows the log filenames, the time of the last modification of the log file and the log file size.
 
+# Display contents of current log file
+With the view the contents of the current log file can be displayed.
+```
+steve=# select * from cat_log_file;
+                                                line                                                 
+-----------------------------------------------------------------------------------------------------
+ 2020-11-26 14:07:26.416 PST [160858] LOG:  database system was shut down at 2020-11-26 14:07:21 PST
+ 2020-11-26 14:07:26.424 PST [160856] LOG:  database system is ready to accept connections
+(2 rows)
+```
