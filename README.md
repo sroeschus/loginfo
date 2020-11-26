@@ -98,3 +98,33 @@ steve=# select log_time, message from cat_csv_file;
 (2 rows)
 ```
 The above is only an example and selects from two fields of the view. The nice thing about the CSV format is that the individual fields are mapped to columns in the above view. The view consists of 23 fields.
+```
+steve=# steve=# \d cat_csv_file
+                  View "public.cat_csv_file"
+        Column         | Type | Collation | Nullable | Default 
+-----------------------+------+-----------+----------+---------
+ log_time              | text |           |          | 
+ user_name             | text |           |          | 
+ database_name         | text |           |          | 
+ process_id            | text |           |          | 
+ connection_from       | text |           |          | 
+ session_id            | text |           |          | 
+ session_line_num      | text |           |          | 
+ command_tag           | text |           |          | 
+ session_start_time    | text |           |          | 
+ virtual_transacton_id | text |           |          | 
+ transaction_id        | text |           |          | 
+ error_severity        | text |           |          | 
+ sql_state_code        | text |           |          | 
+ message               | text |           |          | 
+ detail                | text |           |          | 
+ hint                  | text |           |          | 
+ internal_query        | text |           |          | 
+ internal_query_pos    | text |           |          | 
+ context               | text |           |          | 
+ query                 | text |           |          | 
+ query_pos             | text |           |          | 
+ location              | text |           |          | 
+ application_name      | text |           |          | 
+```
+The individual columns are text fields. This avoids data conversion problems. The field values can be easily converted to postgres data types if required.
