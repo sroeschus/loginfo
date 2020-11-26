@@ -171,3 +171,13 @@ If the extension is no longer needed it can be de-installed with:
 psql
 drop extension loginfo;
 ```
+
+# Configuring postgres to use CSV logs
+If you want to configure postgres to write csv logs, the following change is required:
+```
+log_destination = 'csvlog'
+```
+After that the postgres instance needs to be restarted. Reloading the postgres configuration is not enough. The log_destination can have several values; so different log configurations can be combined:
+```
+log_destination = 'stderr,csvlog'
+```
