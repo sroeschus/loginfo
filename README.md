@@ -1,7 +1,7 @@
 # Summary
 Postgres extension to introspect postgres log files.
 
-This postgres extension allows to get information about log files and the log file configuration. It provides additional database function and views.
+This postgres extension allows to get information about log files and the log file configuration. Postgres supports different ways to configure logging. This is defined with the postgres parameter log_destination. This extension provides additional database function and views. If the log_destination parameter has been set to syslog only the log_info view can be used. For all other values the log files and their contents can be queried and displayed.
 
 # Query the log configuration
 The log configuration can be queried with the database view loginfo.
