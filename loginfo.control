@@ -1,0 +1,5 @@
+# loginfo extension
+comment = 'Functions and views for PostgreSQL to query the postgres log'
+default_version = '1.0'
+module_pathname = '$libdir/loginfo'
+relocatable = false
