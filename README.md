@@ -99,7 +99,7 @@ steve=# select log_time, message from cat_csv_file;
 ```
 The above is only an example and selects from two fields of the view. The nice thing about the CSV format is that the individual fields are mapped to columns in the above view. The view consists of 23 fields.
 ```
-steve=# steve=# \d cat_csv_file
+steve=# \d cat_csv_file
                   View "public.cat_csv_file"
         Column         | Type | Collation | Nullable | Default 
 -----------------------+------+-----------+----------+---------
