@@ -6,6 +6,7 @@ This postgres extension allows to get information about log files and the log fi
 # Query the log configuration
 The log configuration can be queried with the database view loginfo.
 
+```
 steve=# select * from log_info;
            name           |            setting             
 --------------------------+--------------------------------
@@ -29,5 +30,6 @@ steve=# select * from log_info;
  syslog_sequence_numbers  | on
  syslog_split_messages    | on
 (19 rows)
+```
 
 The row with the name real_logfile_name shows the actual log filename. If the logging_collector postgres parameter is set to on, then this is a pipe. If the logging collector is not turned on, it shows the name of the log file. The other rows show the values of postgres parameters that are relevant for logging.
