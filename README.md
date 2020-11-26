@@ -165,6 +165,32 @@ psql
 create extension loginfo;
 ```
 
+# Validating the installation
+After the postgres extension has been installed, the following views should be defined:
+```steve=# \dv
+          List of relations
+ Schema |     Name     | Type | Owner 
+--------+--------------+------+-------
+ public | cat_csv_file | view | steve
+ public | cat_log_file | view | steve
+ public | log_info     | view | steve
+ public | ls_csv_files | view | steve
+ public | ls_log_files | view | steve
+(5 rows)
+```
+In addition the following functions should be defined:
+```
+steve=# \df
+                                    List of functions
+ Schema |         Name         | Result data type |      Argument data types       | Type 
+--------+----------------------+------------------+--------------------------------+------
+ public | li_cat_log_file      | SETOF record     | extension cstring              | func
+ public | li_log_info          | SETOF record     |                                | func
+ public | li_ls_log_files      | SETOF record     | extension cstring              | func
+ public | li_test_cat_log_file | SETOF record     | filename cstring, type cstring | func
+(4 rows)
+```
+
 # Uninstalling the postgres extension
 If the extension is no longer needed it can be de-installed with:
 ```
