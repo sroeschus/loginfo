@@ -162,3 +162,9 @@ psql
 create extension loginfo;
 ```
 
+# Uninstalling the postgres extension
+If the extension is no longer needed it can be de-installed with:
+```
+psql
+drop extension loginfo;
+```
