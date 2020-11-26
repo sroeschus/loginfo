@@ -35,7 +35,7 @@ steve=# select * from log_info;
 The row with the name real_logfile_name shows the actual log filename. If the logging_collector postgres parameter is set to on, then this is a pipe. If the logging collector is not turned on, it shows the name of the log file. The other rows show the values of postgres parameters that are relevant for logging.
 
 # List the log files
-With the ls_log_files view the current list of logfiles can be displayed. This view does not take the value of the postgres parameter into consideration; it only determines which files with the file extension '.log' are stored in the directory specified by the postgres parameter log_directory. The log_directory parameter can be an absolute or a relative path. In case it is a relative path, the directory is a subdirectory of the data_directory.
+With the ls_log_files view the current list of logfiles can be displayed. This view does not take the value of the postgres parameter log_fiename into consideration; it only determines which files with the file extension '.log' are stored in the directory specified by the postgres parameter log_directory. The log_directory parameter can be an absolute or a relative path. In case it is a relative path, the directory is a subdirectory of the data_directory.
 
 ```
 steve=# select * from ls_log_files;
@@ -56,3 +56,24 @@ steve=# select * from ls_log_files;
 (12 rows)
 ```
 It shows the log filenames, the time of the last modification of the log file and the log file size.
+
+# List the log files in CSV format
+With the ls_csv_files view the current list of logfiles in CSV format can be displayed . This requires that postgres has been configured to create log files in the CSV format. Thi s is achieved by specifying log_destination = 'csvlog'. More than one value can be specified for the log_destination. 
+This view does not take the value of the postgres parameter log_filename into consideration; it only determines which files with the file extension '.csv' are stored in the directory specified by the postgres parameter log_directory. The log_directory parameter can be an absolute or a relative path. In case it is a relative path, the directory is a subdirectory of the data_directory.
+
+```
+steve=# select * from ls_csv_files;
+                            filename                            |     last_update     | file_size 
+----------------------------------------------------------------+---------------------+-----------
+ /home/steve/postgres/data/log/postgresql-2020-11-15_141126.csv | 2020.11.15 14:13:19 |       510
+ /home/steve/postgres/data/log/postgresql-2020-11-15_141930.csv | 2020.11.15 22:34:34 |     14414
+ /home/steve/postgres/data/log/postgresql-2020-11-16_000000.csv | 2020.11.16 16:58:37 |       729
+ /home/steve/postgres/data/log/postgresql-2020-11-16_165839.csv | 2020.11.16 18:30:32 |     11002
+ /home/steve/postgres/data/log/postgresql-2020-11-17_000000.csv | 2020.11.19 19:45:54 |     19454
+ /home/steve/postgres/data/log/postgresql-2020-11-18_000000.csv | 2020.11.21 20:00:56 |     11543
+ /home/steve/postgres/data/log/postgresql-2020-11-20_000000.csv | 2020.11.21 22:21:50 |     52616
+ /home/steve/postgres/data/log/postgresql-2020-11-22_000000.csv | 2020.11.26 12:36:58 |    145063
+(8 rows)
+```
+It shows the log filenames, the time of the last modification of the log file and the log file size.
+
