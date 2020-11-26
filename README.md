@@ -33,3 +33,26 @@ steve=# select * from log_info;
 ```
 
 The row with the name real_logfile_name shows the actual log filename. If the logging_collector postgres parameter is set to on, then this is a pipe. If the logging collector is not turned on, it shows the name of the log file. The other rows show the values of postgres parameters that are relevant for logging.
+
+# List the log files
+With the ls_log_files view the current list of logfiles can be displayed. This view does not take the value of the postgres parameter into consideration; it only determines which files with the file extension '.log' are stored in the directory specified by the postgres parameter log_directory. The log_directory parameter can be an absolute or a relative path. In case it is a relative path, the directory is a subdirectory of the data_directory.
+
+```
+steve=# select * from ls_log_files;
+                            filename                            |     last_update     | file_size 
+----------------------------------------------------------------+---------------------+-----------
+ /home/steve/postgres/data/log/postgresql-2020-11-15_141126.log | 2020.11.15 14:13:19 |       319
+ /home/steve/postgres/data/log/postgresql-2020-11-15_141930.log | 2020.11.15 23:02:28 |    409754
+ /home/steve/postgres/data/log/postgresql-2020-11-16_000000.log | 2020.11.16 16:58:37 |       875
+ /home/steve/postgres/data/log/postgresql-2020-11-16_165839.log | 2020.11.16 23:09:09 |  10489744
+ /home/steve/postgres/data/log/postgresql-2020-11-16_230909.log | 2020.11.16 23:46:20 |   2321248
+ /home/steve/postgres/data/log/postgresql-2020-11-17_000000.log | 2020.11.19 19:45:54 |    269834
+ /home/steve/postgres/data/log/postgresql-2020-11-18_000000.log | 2020.11.21 20:00:56 |     93037
+ /home/steve/postgres/data/log/postgresql-2020-11-20_000000.log | 2020.11.26 10:06:53 |     47994
+ /home/steve/postgres/data/log/postgresql-2020-11-22_000000.log | 2020.11.26 11:13:13 |  10485774
+ /home/steve/postgres/data/log/postgresql-2020-11-26_111313.log | 2020.11.26 11:37:14 |  10485763
+ /home/steve/postgres/data/log/postgresql-2020-11-26_113714.log | 2020.11.26 11:45:14 |  10491687
+ /home/steve/postgres/data/log/postgresql-2020-11-26_114514.log | 2020.11.26 12:36:58 |   7643253
+(12 rows)
+```
+It shows the log filenames, the time of the last modification of the log file and the log file size.
