@@ -87,3 +87,17 @@ steve=# select * from cat_log_file;
  2020-11-26 14:07:26.424 PST [160856] LOG:  database system is ready to accept connections
 (2 rows)
 ```
+# Display contents of current log file in CSV format
+With the view the contents of the current log file can be displayed in CSV format (this requires that logs in CSV format have been configured).
+```
+steve=# select log_time, message from cat_csv_file;
+          log_time           |                         message                          
+-----------------------------+----------------------------------------------------------
+ 2020-11-26 14:07:26.416 PST | database system was shut down at 2020-11-26 14:07:21 PST
+ 2020-11-26 14:07:26.424 PST | database system is ready to accept connections
+(2 rows)
+```
+The above is only an example and selects from two fields of the view. The nice thing about the CSV format is that the individual fields are mapped to columns in the above view. The view consists of 23 fields.
+
+
+
