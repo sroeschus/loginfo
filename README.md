@@ -128,3 +128,17 @@ steve=# steve=# \d cat_csv_file
  application_name      | text |           |          | 
 ```
 The individual columns are text fields. This avoids data conversion problems. The field values can be easily converted to postgres data types if required.
+
+# Monitoring the postgres log
+The view to display the contents of the CSV logs are very useful in monitoring the health of the system. The following SQL query only scratches the surface:
+```
+SELECT v.error_severity, COUNT(*)
+  FROM cat_csv_log 
+ GROUP BY error_severity;
+ error_severity | count
+----------------+-------
+ WARNING        |     8
+ LOG            |    38
+ ERROR          |     5
+(3 rows)
+```
