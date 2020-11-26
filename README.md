@@ -98,6 +98,3 @@ steve=# select log_time, message from cat_csv_file;
 (2 rows)
 ```
 The above is only an example and selects from two fields of the view. The nice thing about the CSV format is that the individual fields are mapped to columns in the above view. The view consists of 23 fields.
-
-
-
