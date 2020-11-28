@@ -415,3 +415,84 @@ SELECT v.message
 	query_pos              TEXT,
 	location               TEXT,
 	application_name       TEXT);
+
+-- Eof while processing spaces.
+SELECT v.message
+ FROM li_test_cat_log_file(concat(:'cwd', '/sql/eof-spaces-in-record.csv')::cstring, 'csv'::cstring)
+      v(log_time               TEXT,
+        user_name              TEXT,
+	database_name          TEXT,
+	process_id             TEXT,
+	connection_from        TEXT,
+	session_id             TEXT,
+	session_line_num       TEXT,
+	command_tag            TEXT,
+	session_start_time     TEXT,
+	virtual_transaction_id TEXT,
+	transaction_id         TEXT,
+	error_severity         TEXT,
+	sql_state_code         TEXT,
+	message                TEXT,
+	detail                 TEXT,
+	hint                   TEXT,
+	internal_query         TEXT,
+	internal_query_pos     TEXT,
+	context                TEXT,
+	query                  TEXT,
+	query_pos              TEXT,
+	location               TEXT,
+	application_name       TEXT);
+
+-- Eof while processing default field.
+SELECT v.message
+ FROM li_test_cat_log_file(concat(:'cwd', '/sql/eof-default-field.csv')::cstring, 'csv'::cstring)
+      v(log_time               TEXT,
+        user_name              TEXT,
+	database_name          TEXT,
+	process_id             TEXT,
+	connection_from        TEXT,
+	session_id             TEXT,
+	session_line_num       TEXT,
+	command_tag            TEXT,
+	session_start_time     TEXT,
+	virtual_transaction_id TEXT,
+	transaction_id         TEXT,
+	error_severity         TEXT,
+	sql_state_code         TEXT,
+	message                TEXT,
+	detail                 TEXT,
+	hint                   TEXT,
+	internal_query         TEXT,
+	internal_query_pos     TEXT,
+	context                TEXT,
+	query                  TEXT,
+	query_pos              TEXT,
+	location               TEXT,
+	application_name       TEXT);
+
+-- Eof while processing string field.
+SELECT v.message
+ FROM li_test_cat_log_file(concat(:'cwd', '/sql/eof-string-field.csv')::cstring, 'csv'::cstring)
+      v(log_time               TEXT,
+        user_name              TEXT,
+	database_name          TEXT,
+	process_id             TEXT,
+	connection_from        TEXT,
+	session_id             TEXT,
+	session_line_num       TEXT,
+	command_tag            TEXT,
+	session_start_time     TEXT,
+	virtual_transaction_id TEXT,
+	transaction_id         TEXT,
+	error_severity         TEXT,
+	sql_state_code         TEXT,
+	message                TEXT,
+	detail                 TEXT,
+	hint                   TEXT,
+	internal_query         TEXT,
+	internal_query_pos     TEXT,
+	context                TEXT,
+	query                  TEXT,
+	query_pos              TEXT,
+	location               TEXT,
+	application_name       TEXT);
